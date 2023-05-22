@@ -70,7 +70,7 @@ pub mod wba_vault {
         Ok(())
     }
 
-    /*pub fn deposit_spl(ctx: Context<DepositSpl>, amount: u64) -> Result<()> {
+    pub fn deposit_spl(ctx: Context<DepositSpl>, amount: u64) -> Result<()> {
         let cpi_program = ctx.accounts.token_program.to_account_info();
         let cpi_accounts = anchor_spl::token::Transfer {
             from: ctx.accounts.owner_ata.to_account_info(),
@@ -78,19 +78,6 @@ pub mod wba_vault {
             authority: ctx.accounts.owner.to_account_info(),
         };
         let cpi_context = CpiContext::new(cpi_program, cpi_accounts);
-
-        anchor_spl::token::transfer(cpi_context, amount)?;
-        
-        Ok(())
-    }*/
-
-    pub fn deposit_spl(ctx: Context<DepositSpl>, amount: u64) -> Result<()> {
-        let cpi_program = ctx.accounts.token_program.to_account_info();
-        let cpi_context = CpiContext::new(cpi_program, anchor_spl::token::Transfer {
-            from: ctx.accounts.owner_ata.to_account_info(),
-            to: ctx.accounts.vault_ata.to_account_info(),
-            authority: ctx.accounts.owner.to_account_info(),
-        });
 
         anchor_spl::token::transfer(cpi_context, amount)?;
         
