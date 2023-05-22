@@ -1,0 +1,28 @@
+{
+  "name": "airdrop",
+  "version": "1.0.0",
+  "main": "index.js",
+  "license": "MIT",
+  "scripts": {
+    "keygen": "ts-node ./keygen.ts",
+    "airdrop": "ts-node ./airdrop.ts",
+    "transfer": "ts-node ./transfer.ts",
+    "enroll": "ts-node ./enroll.ts",
+    "mintInit": "ts-node ./spl_init.ts",
+    "splMint": "ts-node ./spl_mint.ts",
+    "splMetadata": "ts-node ./spl_metadata.ts",
+    "splTransfer": "ts-node ./spl_transfer.ts"
+  },
+  "dependencies": {
+    "@metaplex-foundation/js": "^0.19.3",
+    "@metaplex-foundation/mpl-token-metadata": "^2.11.1",
+    "@solana/spl-token": "^0.3.7",
+    "@solana/web3.js": "^1.75.0",
+    "@types/node": "^18.15.11",
+    "typescript": "^5.0.4"
+  },
+  "devDependencies": {
+    "@types/mocha": "^10.0.1",
+    "ts-node": "^10.9.1"
+  }
+}
