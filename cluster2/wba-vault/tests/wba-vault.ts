@@ -130,7 +130,7 @@ describe("wba-vault", async () => {
 
     //create the recipient token account
     let ataTo = await getOrCreateAssociatedTokenAccount(provider.connection, keypair, mint, vaultAuth_key, true);
-    console.log("ATA To: ", ataFrom.address.toString());
+    console.log("ATA To: ", ataTo.address.toString());
 
     //Mint SPL Tokens to our account (ATA)
     let tx = await mintTo(provider.connection, keypair, mint, ataFrom.address, keypair, 1_000_000 * 1);

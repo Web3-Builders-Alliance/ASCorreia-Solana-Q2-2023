@@ -8,7 +8,7 @@ declare_id!("Fg6PaFpoGXkYsidMpWTK6W2BeZ7FEfcYkg476zPFsLnS");
 
 #[program]
 pub mod wba_vault {
-    use solana_program::system_instruction::transfer;
+    use solana_program::{system_instruction::transfer, entrypoint::ProgramResult};
 
     use super::*;
 
@@ -55,14 +55,17 @@ pub mod wba_vault {
         Ok(())
     }
 
-    pub fn withdraw2(ctx: Context<Withdraw>, amount: u64) -> Result<()> {
+    pub fn withdraw2(ctx: Context<Withdraw>, amount: u64) -> ProgramResult {
         let auth_key = ctx.accounts.vault_auth.key();
         let seeds = &[
             "vault".as_bytes(),
             auth_key.as_ref(),
             &[ctx.accounts.vault_state.auth_bump]
         ];
-
+        let rent = Rent::get()?.minimum_balance(ctx.accounts.vault_state.to_account_info().data_len());
+        if (ctx.accounts.vault_state.to_account_info().lamports() - rent) <= amount {
+            return Err(ProgramError::InsufficientFunds);
+        }
         let transfer_instruction = &solana_program::system_instruction::transfer(&ctx.accounts.vault.key(), &ctx.accounts.owner.key(), amount);
 
         invoke_signed(transfer_instruction, &[ctx.accounts.vault.to_account_info(), ctx.accounts.owner.to_account_info()], &[seeds])?;
@@ -130,12 +133,13 @@ pub struct DepositSpl<'info> {
     pub vault_auth: UncheckedAccount<'info>,
     #[account(mut)]
     pub owner_ata: Account<'info, TokenAccount>,
-    #[account(mut)]
+    #[account(init_if_needed, payer = owner, associated_token::mint = token_mint, associated_token::authority = vault_auth)] //init constraints
     pub vault_ata: Account<'info, TokenAccount>,
     /// CHECK: Don't need to check this
     pub token_mint: UncheckedAccount<'info>,
     pub system_program: Program<'info, System>,
     pub token_program: Program<'info, Token>,
+    pub associated_token_program: Program<'info, AssociatedToken>,
     #[account(mut)]
     pub owner: Signer<'info>
 }
